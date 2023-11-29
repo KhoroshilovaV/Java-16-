@@ -2,12 +2,12 @@ import java.sql.*;
 public class Main {
     public static void main(String[] args) {
         HospitalDatabase hospitalDatabase = new HospitalDatabase();
-        Department department1 = new Department("Кардиологическое", 0);
-        Department department2 = new Department("Нейрохирургическое", 0);
+        Department department1 = new Department("Хирургическое", 0);
+        Department department2 = new Department("Кардиологическое", 0);
         hospitalDatabase.addDepartment(department1);
         hospitalDatabase.addDepartment(department2);
-        Patient patient1 = new Patient("Настасья Филипповна", 25, "Женский");
-        Patient patient2 = new Patient("Иван Васильевич", 44, "Мужской");
+        Patient patient1 = new Patient("Сергей Заварзин", 52, "Мужской");
+        Patient patient2 = new Patient("Дарья Селезнева", 30, "Женский");
         hospitalDatabase.addPatient(patient1);
         hospitalDatabase.addPatient(patient2);
         hospitalDatabase.addPatientToDepartment(patient1, department1);
@@ -15,9 +15,9 @@ public class Main {
         hospitalDatabase.editPatient(patient1, patient2);
         hospitalDatabase.printPatientsInfo();
         try {
-            String url = "jdbc:mysql://localhost:3306/practica";
-            String username = "11";
-            String password = "416256";
+            String url = "jdbc:mysql://localhost:3269/practica";
+            String username = "20";
+            String password = "365274";
             Connection connection = DriverManager.getConnection(url, username, password);
             String createDepartmentsTable = "CREATE TABLE IF NOT EXISTS departments (" +
                     "id INT AUTO_INCREMENT PRIMARY KEY," +
