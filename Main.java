@@ -1,57 +1,63 @@
 import java.sql.*;
+
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         HospitalDatabase hospitalDatabase = new HospitalDatabase();
-        Department department1 = new Department("Хирургическое", 0);
-        Department department2 = new Department("Кардиологическое", 0);
+        Department department1 = new Department("Гинекологическое", 0);
+        Department department2 = new Department("Урологическое", 0);
         hospitalDatabase.addDepartment(department1);
         hospitalDatabase.addDepartment(department2);
-        Patient patient1 = new Patient("Сергей Заварзин", 52, "Мужской");
-        Patient patient2 = new Patient("Дарья Селезнева", 30, "Женский");
+        Patient patient1 = new Patient("Олеся Мелешко", 19, "Женский");
+        Patient patient2 = new Patient("Дарья Селезнева", 19, "Женский");
+        Patient patient3 = new Patient("Максим Базанова", 19, "Мужской");
         hospitalDatabase.addPatient(patient1);
         hospitalDatabase.addPatient(patient2);
+        hospitalDatabase.addPatient(patient3);
         hospitalDatabase.addPatientToDepartment(patient1, department1);
-        hospitalDatabase.addPatientToDepartment(patient2, department1);
-        hospitalDatabase.editPatient(patient1, patient2);
-        hospitalDatabase.printPatientsInfo();
-        try {
-            String url = "jdbc:mysql://localhost:3269/practica";
-            String username = "20";
-            String password = "365274";
-            Connection connection = DriverManager.getConnection(url, username, password);
-            String createDepartmentsTable = "CREATE TABLE IF NOT EXISTS departments (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY," +
-                    "name VARCHAR(100) NOT NULL," +
-                    "patient_count INT DEFAULT 0" +
-                    ")";
-            Statement createDepartmentsStatement = connection.createStatement();
-            createDepartmentsStatement.execute(createDepartmentsTable);
-            String createPatientsTable = "CREATE TABLE IF NOT EXISTS patients (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY," +
-                    "full_name VARCHAR(100) NOT NULL," +
-                    "age INT," +
-                    "gender VARCHAR(10)" +
-                    ")";
-            Statement createPatientsStatement = connection.createStatement();
-            createPatientsStatement.execute(createPatientsTable);
-            for (Department department : hospitalDatabase.getDepartments()) {
-                String insertDepartmentQuery = "INSERT INTO departments (name, patient_count) VALUES (?, ?)";
-                PreparedStatement insertDepartmentStatement = connection.prepareStatement(insertDepartmentQuery);
-                insertDepartmentStatement.setString(1, department.getName());
-                insertDepartmentStatement.setInt(2, department.getPatientCount());
-                insertDepartmentStatement.executeUpdate();
-            }
-            for (Patient patient : hospitalDatabase.getPatients()) {
-                String insertPatientQuery = "INSERT INTO patients (full_name, age, gender) VALUES (?, ?, ?)";
-                PreparedStatement insertPatientStatement = connection.prepareStatement(insertPatientQuery);
-                insertPatientStatement.setString(1, patient.getFullName());
-                insertPatientStatement.setInt(2, patient.getAge());
-                insertPatientStatement.setString(3, patient.getGender());
-                insertPatientStatement.executeUpdate();
-            }
-            connection.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        hospitalDatabase.addPatientToDepartment(patient2, department2);
+        hospitalDatabase.addPatientToDepartment(patient3, department2);
+        /*hospitalDatabase.printPatientsInfo();
+        hospitalDatabase.printDepartmentsInfo();
+         */
+        ConnectionUtil db = new ConnectionUtil();
+        Connection conn = db.connect_to_db("koketka30", "postgres", "koketka30");
+        // добавление пациента
+        /*PreparedStatement insertStmt = conn.prepareStatement("INSERT INTO Patients(full_name, age, gender) VALUES(?,?,?)");
+        insertStmt.setString(1,patient1.getFullName());
+        insertStmt.setInt(2,patient1.getAge());
+        insertStmt.setString(3,patient1.getGender());
+        insertStmt.executeUpdate();
+
+         */
+
+
+
+
+        // добавление отделения
+        /*PreparedStatement insertStmt1 = conn.prepareStatement("INSERT INTO Departments(full_name, patients) VALUES(?,?)");
+        insertStmt1.setString(1,department2.getName());
+        insertStmt1.setInt(2,department2.getPatientCount());
+        insertStmt1.executeUpdate();
+
+         */
+
+        //удаление
+        /*PreparedStatement deletStmt = conn.prepareStatement("DELETE FROM patients WHERE full_name = ?");
+        deletStmt.setString(1, "Олеся Мелешко");
+        deletStmt.executeUpdate();
+
+         */
+        //вывод данных в терминал
+        PreparedStatement stmt = conn.prepareStatement("SELECT * FROM patients");
+        ResultSet rs = stmt.executeQuery();
+        while (rs.next()) {
+            System.out.printf("full_name:%s age:%s gender:%s%n", rs.getString("full_name"), rs.getInt("age"), rs.getString("gender"));
+        }
+        PreparedStatement stmt1 = conn.prepareStatement("SELECT * FROM departments");
+        System.out.println();
+        ResultSet rs1 = stmt1.executeQuery();
+        while (rs1.next()) {
+            System.out.printf("full_name:%s patients:%s%n", rs1.getString("full_name"), rs1.getInt("patients"));
         }
     }
 }
